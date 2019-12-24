@@ -136,9 +136,9 @@ struct bbr {
 /* Window length of bw filter (in rounds): */
 static const int bbr_bw_rtts = CYCLE_LEN + 2;
 /* Window length of min_rtt filter (in sec): */
-static const u32 bbr_min_rtt_win_sec = 4;
+static const u32 bbr_min_rtt_win_sec = 8;
 /* Minimum time (in ms) spent at bbr_cwnd_min_target in BBR_PROBE_RTT mode: */
-static const u32 bbr_probe_rtt_mode_ms = 70;
+static const u32 bbr_probe_rtt_mode_ms = 180;
 /* Skip TSO below the following bandwidth (bits/sec): */
 static const int bbr_min_tso_rate = 20000000;
 
@@ -147,11 +147,11 @@ static const int bbr_min_tso_rate = 20000000;
  * and send the same number of packets per RTT that an un-paced, slow-starting
  * Reno or CUBIC flow would:
  */
-static const int bbr_high_gain  = BBR_UNIT * 5000 / 1000 + 8;
+static const int bbr_high_gain  = BBR_UNIT * 2000 / 1000 + 5;
 /* The pacing gain of 1/high_gain in BBR_DRAIN is calculated to typically drain
  * the queue created in BBR_STARTUP in a single round:
  */
-static const int bbr_drain_gain = BBR_UNIT * 1000 / 5000;
+static const int bbr_drain_gain = BBR_UNIT * 1000 / 2000;
 /* The gain for deriving steady-state cwnd tolerates delayed/stretched ACKs: */
 static const int bbr_cwnd_gain  = BBR_UNIT * 16;
 /* The pacing_gain values for the PROBE_BW gain cycle, to discover/share bw: */
