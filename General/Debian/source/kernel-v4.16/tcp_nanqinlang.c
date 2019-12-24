@@ -168,7 +168,7 @@ static const u32 bbr_cycle_rand = 7;
  * smooth functioning, a sliding window protocol ACKing every other packet
  * needs at least 4 packets in flight:
  */
-static const u32 bbr_cwnd_min_target = 4;
+static const u32 bbr_cwnd_min_target = 5;
 
 /* To estimate if BBR_STARTUP mode (i.e. high_gain) has filled pipe... */
 /* If bw has increased significantly (1.25x), there may be more bw available: */
@@ -360,7 +360,7 @@ static u32 bbr_target_cwnd(struct sock *sk, u32 bw, int gain)
 	cwnd = (((w * gain) >> BBR_SCALE) + BW_UNIT - 1) / BW_UNIT;
 
 	/* Allow enough full-sized skbs in flight to utilize end systems. */
-	cwnd += 3 * bbr->tso_segs_goal;
+	cwnd += 5 * bbr->tso_segs_goal;
 
 	/* Reduce delayed ACKs by rounding up cwnd to the next even number. */
 	cwnd = (cwnd + 1) & ~1U;
@@ -411,7 +411,7 @@ static bool bbr_set_cwnd_to_recover_or_restore(
 	}
 
 	if (bbr->packet_conservation) {
-		*new_cwnd = 1.5 * max(cwnd, tcp_packets_in_flight(tp) + acked);
+		*new_cwnd = max(cwnd, tcp_packets_in_flight(tp) + acked);
 		return true;	/* yes, using packet conservation */
 	}
 	*new_cwnd = cwnd;
