@@ -301,7 +301,7 @@ static void bbr_save_cwnd(struct sock *sk)
 	if (bbr->prev_ca_state < TCP_CA_Recovery && bbr->mode != BBR_PROBE_RTT)
 		bbr->prior_cwnd = tp->snd_cwnd;  /* this cwnd is good enough */
 	else  /* loss recovery or BBR_PROBE_RTT have temporarily cut cwnd */
-		bbr->prior_cwnd = 1.25 * max(bbr->prior_cwnd, tp->snd_cwnd);
+		bbr->prior_cwnd = max(bbr->prior_cwnd, tp->snd_cwnd);
 }
 
 static void bbr_cwnd_event(struct sock *sk, enum tcp_ca_event event)
