@@ -138,26 +138,26 @@ static const int bbr_bw_rtts = CYCLE_LEN + 2;
 /* Window length of min_rtt filter (in sec): */
 static const u32 bbr_min_rtt_win_sec = 10;
 /* Minimum time (in ms) spent at bbr_cwnd_min_target in BBR_PROBE_RTT mode: */
-static const u32 bbr_probe_rtt_mode_ms = 100;
+static const u32 bbr_probe_rtt_mode_ms = 80;
 /* Skip TSO below the following bandwidth (bits/sec): */
-static const int bbr_min_tso_rate = 1200000;
+static const int bbr_min_tso_rate = 3600000;
 
 /* We use a high_gain value of 2/ln(2) because it's the smallest pacing gain
  * that will allow a smoothly increasing pacing rate that will double each RTT
  * and send the same number of packets per RTT that an un-paced, slow-starting
  * Reno or CUBIC flow would:
  */
-static const int bbr_high_gain  = BBR_UNIT * 3000 / 1000 + 1;
+static const int bbr_high_gain  = BBR_UNIT * 3300 / 1000 + 1;
 /* The pacing gain of 1/high_gain in BBR_DRAIN is calculated to typically drain
  * the queue created in BBR_STARTUP in a single round:
  */
-static const int bbr_drain_gain = BBR_UNIT * 1000 / 3000;
+static const int bbr_drain_gain = BBR_UNIT * 1000 / 3300;
 /* The gain for deriving steady-state cwnd tolerates delayed/stretched ACKs: */
 static const int bbr_cwnd_gain  = BBR_UNIT * 2;
 /* The pacing_gain values for the PROBE_BW gain cycle, to discover/share bw: */
 static const int bbr_pacing_gain[] = {
-	BBR_UNIT * 6 / 4,	/* probe for more available bw */
-	BBR_UNIT * 3 / 4,	/* drain queue and/or yield bw to other flows */
+	BBR_UNIT * 7 / 4,	/* probe for more available bw */
+	BBR_UNIT * 7 / 8,	/* drain queue and/or yield bw to other flows */
 	BBR_UNIT * 5 / 4, BBR_UNIT * 5 / 4, BBR_UNIT * 5 / 4,	/* cruise at 1.0*bw to utilize pipe, */
 	BBR_UNIT * 6 / 4, BBR_UNIT * 6 / 4, BBR_UNIT * 6 / 4	/* without creating excess queue... */
 };
@@ -172,7 +172,7 @@ static const u32 bbr_cwnd_min_target = 4;
 
 /* To estimate if BBR_STARTUP mode (i.e. high_gain) has filled pipe... */
 /* If bw has increased significantly (1.25x), there may be more bw available: */
-static const u32 bbr_full_bw_thresh = BBR_UNIT * 5 / 4;
+static const u32 bbr_full_bw_thresh = BBR_UNIT * 7 / 4;
 /* But after 3 rounds w/o significant bw growth, estimate pipe is full: */
 static const u32 bbr_full_bw_cnt = 3;
 
@@ -301,7 +301,7 @@ static void bbr_save_cwnd(struct sock *sk)
 	if (bbr->prev_ca_state < TCP_CA_Recovery && bbr->mode != BBR_PROBE_RTT)
 		bbr->prior_cwnd = tp->snd_cwnd;  /* this cwnd is good enough */
 	else  /* loss recovery or BBR_PROBE_RTT have temporarily cut cwnd */
-		bbr->prior_cwnd = max(bbr->prior_cwnd, tp->snd_cwnd);
+		bbr->prior_cwnd = 1.25 * max(bbr->prior_cwnd, tp->snd_cwnd);
 }
 
 static void bbr_cwnd_event(struct sock *sk, enum tcp_ca_event event)
