@@ -136,9 +136,9 @@ struct bbr {
 /* Window length of bw filter (in rounds): */
 static const int bbr_bw_rtts = CYCLE_LEN + 2;
 /* Window length of min_rtt filter (in sec): */
-static const u32 bbr_min_rtt_win_sec = 8;
+static const u32 bbr_min_rtt_win_sec = 1;
 /* Minimum time (in ms) spent at bbr_cwnd_min_target in BBR_PROBE_RTT mode: */
-static const u32 bbr_probe_rtt_mode_ms = 120;
+static const u32 bbr_probe_rtt_mode_ms = 40;
 /* Skip TSO below the following bandwidth (bits/sec): */
 static const int bbr_min_tso_rate = 20000000;
 
