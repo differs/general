@@ -81,12 +81,12 @@
  * an issue. The upper bound isn't an issue with existing technologies.
  */
 #define BW_SCALE  24
-#define BW_UNIT   (1 << BW_SCALE)
+#define BW_UNIT   (8 << BW_SCALE)
 
 #define BBR_SCALE 8	/* scaling factor for fractions in BBR (e.g. gains) */
-#define BBR_UNIT  (1 << BBR_SCALE)
+#define BBR_UNIT  (8 << BBR_SCALE)
 
-#define CYCLE_LEN 8	/* number of phases in a pacing gain cycle */
+#define CYCLE_LEN 16	/* number of phases in a pacing gain cycle */
 
 /* BBR has the following modes for deciding how fast to send: */
 enum bbr_mode {
@@ -136,28 +136,28 @@ struct bbr {
 /* Window length of bw filter (in rounds): */
 static const int bbr_bw_rtts = CYCLE_LEN + 2;
 /* Window length of min_rtt filter (in sec): */
-static const u32 bbr_min_rtt_win_sec = 1;
+static const u32 bbr_min_rtt_win_sec = 3;
 /* Minimum time (in ms) spent at bbr_cwnd_min_target in BBR_PROBE_RTT mode: */
-static const u32 bbr_probe_rtt_mode_ms = 40;
+static const u32 bbr_probe_rtt_mode_ms = 80;
 /* Skip TSO below the following bandwidth (bits/sec): */
-static const int bbr_min_tso_rate = 20000000;
+static const int bbr_min_tso_rate = 35000000;
 
 /* We use a high_gain value of 2/ln(2) because it's the smallest pacing gain
  * that will allow a smoothly increasing pacing rate that will double each RTT
  * and send the same number of packets per RTT that an un-paced, slow-starting
  * Reno or CUBIC flow would:
  */
-static const int bbr_high_gain  = BBR_UNIT * 3000 / 1000 + 5;
+static const int bbr_high_gain  = BBR_UNIT * 3000 / 1000 + 3;
 /* The pacing gain of 1/high_gain in BBR_DRAIN is calculated to typically drain
  * the queue created in BBR_STARTUP in a single round:
  */
 static const int bbr_drain_gain = BBR_UNIT * 1000 / 3000;
 /* The gain for deriving steady-state cwnd tolerates delayed/stretched ACKs: */
-static const int bbr_cwnd_gain  = BBR_UNIT * 8;
+static const int bbr_cwnd_gain  = BBR_UNIT * 7;
 /* The pacing_gain values for the PROBE_BW gain cycle, to discover/share bw: */
 static const int bbr_pacing_gain[] = {
-	BBR_UNIT * 9 / 4,	/* probe for more available bw */
-	BBR_UNIT * 4 / 5,	/* drain queue and/or yield bw to other flows */
+	BBR_UNIT * 6 / 4,	/* probe for more available bw */
+	BBR_UNIT * 3 / 4,	/* drain queue and/or yield bw to other flows */
 	BBR_UNIT * 6 / 4, BBR_UNIT * 5 / 4, BBR_UNIT * 5 / 4,	/* cruise at 1.0*bw to utilize pipe, */
 	BBR_UNIT * 6 / 4, BBR_UNIT * 6 / 4, BBR_UNIT * 6 / 4	/* without creating excess queue... */
 };
@@ -172,15 +172,15 @@ static const u32 bbr_cwnd_min_target = 6;
 
 /* To estimate if BBR_STARTUP mode (i.e. high_gain) has filled pipe... */
 /* If bw has increased significantly (1.25x), there may be more bw available: */
-static const u32 bbr_full_bw_thresh = BBR_UNIT * 5 / 4;
+static const u32 bbr_full_bw_thresh = BBR_UNIT * 8 / 4;
 /* But after 3 rounds w/o significant bw growth, estimate pipe is full: */
-static const u32 bbr_full_bw_cnt = 5;
+static const u32 bbr_full_bw_cnt = 4;
 
 /* "long-term" ("LT") bandwidth estimator parameters... */
 /* The minimum number of rounds in an LT bw sampling interval: */
 static const u32 bbr_lt_intvl_min_rtts = 4;
 /* If lost/delivered ratio > 20%, interval is "lossy" and we may be policed: */
-static const u32 bbr_lt_loss_thresh = 70;
+static const u32 bbr_lt_loss_thresh = 40;
 /* If 2 intervals have a bw ratio <= 1/8, their bw is "consistent": */
 static const u32 bbr_lt_bw_ratio = BBR_UNIT / 4;
 /* If 2 intervals have a bw diff <= 4 Kbit/sec their bw is "consistent": */
@@ -222,7 +222,7 @@ static u64 bbr_rate_bytes_per_sec(struct sock *sk, u64 rate, int gain)
 	rate *= gain;
 	rate >>= BBR_SCALE;
 	rate *= USEC_PER_SEC;
-	return rate * 2 >> BW_SCALE;
+	return rate >> BW_SCALE;
 }
 
 /* Convert a BBR bw and gain factor to a pacing rate in bytes per second. */
