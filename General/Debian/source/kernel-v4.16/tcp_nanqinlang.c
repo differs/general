@@ -83,7 +83,7 @@
 #define BW_SCALE  48
 #define BW_UNIT   (1 << BW_SCALE)
 
-#define BBR_SCALE 32	/* scaling factor for fractions in BBR (e.g. gains) */
+#define BBR_SCALE 64	/* scaling factor for fractions in BBR (e.g. gains) */
 #define BBR_UNIT  (1 << BBR_SCALE)
 
 #define CYCLE_LEN 8	/* number of phases in a pacing gain cycle */
@@ -147,7 +147,7 @@ static const int bbr_min_tso_rate = 300000000;
  * and send the same number of packets per RTT that an un-paced, slow-starting
  * Reno or CUBIC flow would:
  */
-static const int bbr_high_gain  = BBR_UNIT * 3000 / 1000 + 1;
+static const int bbr_high_gain  = BBR_UNIT * 5000 / 1000 + 1;
 /* The pacing gain of 1/high_gain in BBR_DRAIN is calculated to typically drain
  * the queue created in BBR_STARTUP in a single round:
  */
