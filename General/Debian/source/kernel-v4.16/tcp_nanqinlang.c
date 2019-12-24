@@ -138,7 +138,7 @@ static const int bbr_bw_rtts = CYCLE_LEN + 2;
 /* Window length of min_rtt filter (in sec): */
 static const u32 bbr_min_rtt_win_sec = 8;
 /* Minimum time (in ms) spent at bbr_cwnd_min_target in BBR_PROBE_RTT mode: */
-static const u32 bbr_probe_rtt_mode_ms = 180;
+static const u32 bbr_probe_rtt_mode_ms = 120;
 /* Skip TSO below the following bandwidth (bits/sec): */
 static const int bbr_min_tso_rate = 20000000;
 
@@ -147,16 +147,16 @@ static const int bbr_min_tso_rate = 20000000;
  * and send the same number of packets per RTT that an un-paced, slow-starting
  * Reno or CUBIC flow would:
  */
-static const int bbr_high_gain  = BBR_UNIT * 2000 / 1000 + 5;
+static const int bbr_high_gain  = BBR_UNIT * 3000 / 1000 + 5;
 /* The pacing gain of 1/high_gain in BBR_DRAIN is calculated to typically drain
  * the queue created in BBR_STARTUP in a single round:
  */
-static const int bbr_drain_gain = BBR_UNIT * 1000 / 2000;
+static const int bbr_drain_gain = BBR_UNIT * 1000 / 3000;
 /* The gain for deriving steady-state cwnd tolerates delayed/stretched ACKs: */
-static const int bbr_cwnd_gain  = BBR_UNIT * 16;
+static const int bbr_cwnd_gain  = BBR_UNIT * 8;
 /* The pacing_gain values for the PROBE_BW gain cycle, to discover/share bw: */
 static const int bbr_pacing_gain[] = {
-	BBR_UNIT * 7 / 4,	/* probe for more available bw */
+	BBR_UNIT * 9 / 4,	/* probe for more available bw */
 	BBR_UNIT * 4 / 5,	/* drain queue and/or yield bw to other flows */
 	BBR_UNIT * 6 / 4, BBR_UNIT * 5 / 4, BBR_UNIT * 5 / 4,	/* cruise at 1.0*bw to utilize pipe, */
 	BBR_UNIT * 6 / 4, BBR_UNIT * 6 / 4, BBR_UNIT * 6 / 4	/* without creating excess queue... */
@@ -184,7 +184,7 @@ static const u32 bbr_lt_loss_thresh = 70;
 /* If 2 intervals have a bw ratio <= 1/8, their bw is "consistent": */
 static const u32 bbr_lt_bw_ratio = BBR_UNIT / 4;
 /* If 2 intervals have a bw diff <= 4 Kbit/sec their bw is "consistent": */
-static const u32 bbr_lt_bw_diff = 4000 / 8;
+static const u32 bbr_lt_bw_diff = 4000 / 16;
 /* If we estimate we're policed, use lt_bw for this many round trips: */
 static const u32 bbr_lt_bw_max_rtts = 48;
 
@@ -440,7 +440,7 @@ static void bbr_set_cwnd(struct sock *sk, const struct rate_sample *rs,
 		cwnd = min(cwnd + acked, target_cwnd);
 	else if (cwnd < target_cwnd || tp->delivered < TCP_INIT_CWND)
 		cwnd = cwnd + acked;
-	cwnd = max(cwnd, bbr_cwnd_min_target);
+	cwnd = max(cwnd * 2, bbr_cwnd_min_target * 4);
 
 done:
 	tp->snd_cwnd = min(cwnd, tp->snd_cwnd_clamp);	/* apply global cap */
@@ -466,7 +466,7 @@ static bool bbr_is_next_cycle_phase(struct sock *sk,
 		return is_full_length;		/* just use wall clock time */
 
 	inflight = rs->prior_in_flight;  /* what was in-flight before ACK? */
-	bw = bbr_max_bw(sk);
+	bw =2 * bbr_max_bw(sk);
 
 	/* A pacing_gain > 1.0 probes for bw by trying to raise inflight to at
 	 * least pacing_gain*BDP; this may take more than min_rtt if min_rtt is
