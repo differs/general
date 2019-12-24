@@ -80,10 +80,10 @@
  * Since the minimum window is >=4 packets, the lower bound isn't
  * an issue. The upper bound isn't an issue with existing technologies.
  */
-#define BW_SCALE  36
+#define BW_SCALE  24
 #define BW_UNIT   (1 << BW_SCALE)
 
-#define BBR_SCALE 24	/* scaling factor for fractions in BBR (e.g. gains) */
+#define BBR_SCALE 8	/* scaling factor for fractions in BBR (e.g. gains) */
 #define BBR_UNIT  (1 << BBR_SCALE)
 
 #define CYCLE_LEN 8	/* number of phases in a pacing gain cycle */
@@ -140,7 +140,7 @@ static const u32 bbr_min_rtt_win_sec = 8;
 /* Minimum time (in ms) spent at bbr_cwnd_min_target in BBR_PROBE_RTT mode: */
 static const u32 bbr_probe_rtt_mode_ms = 80;
 /* Skip TSO below the following bandwidth (bits/sec): */
-static const int bbr_min_tso_rate = 400000000;
+static const int bbr_min_tso_rate = 40000000;
 
 /* We use a high_gain value of 2/ln(2) because it's the smallest pacing gain
  * that will allow a smoothly increasing pacing rate that will double each RTT
@@ -172,9 +172,9 @@ static const u32 bbr_cwnd_min_target = 5;
 
 /* To estimate if BBR_STARTUP mode (i.e. high_gain) has filled pipe... */
 /* If bw has increased significantly (1.25x), there may be more bw available: */
-static const u32 bbr_full_bw_thresh = BBR_UNIT * 6 / 4;
+static const u32 bbr_full_bw_thresh = BBR_UNIT * 5 / 4;
 /* But after 3 rounds w/o significant bw growth, estimate pipe is full: */
-static const u32 bbr_full_bw_cnt = 3;
+static const u32 bbr_full_bw_cnt = 5;
 
 /* "long-term" ("LT") bandwidth estimator parameters... */
 /* The minimum number of rounds in an LT bw sampling interval: */
