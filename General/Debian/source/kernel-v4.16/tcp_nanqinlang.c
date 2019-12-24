@@ -81,10 +81,10 @@
  * an issue. The upper bound isn't an issue with existing technologies.
  */
 #define BW_SCALE  24
-#define BW_UNIT   (8 << BW_SCALE)
+#define BW_UNIT   (1 << BW_SCALE)
 
 #define BBR_SCALE 8	/* scaling factor for fractions in BBR (e.g. gains) */
-#define BBR_UNIT  (8 << BBR_SCALE)
+#define BBR_UNIT  (1 << BBR_SCALE)
 
 #define CYCLE_LEN 16	/* number of phases in a pacing gain cycle */
 
@@ -136,7 +136,7 @@ struct bbr {
 /* Window length of bw filter (in rounds): */
 static const int bbr_bw_rtts = CYCLE_LEN + 2;
 /* Window length of min_rtt filter (in sec): */
-static const u32 bbr_min_rtt_win_sec = 3;
+static const u32 bbr_min_rtt_win_sec = 8;
 /* Minimum time (in ms) spent at bbr_cwnd_min_target in BBR_PROBE_RTT mode: */
 static const u32 bbr_probe_rtt_mode_ms = 80;
 /* Skip TSO below the following bandwidth (bits/sec): */
@@ -147,7 +147,7 @@ static const int bbr_min_tso_rate = 35000000;
  * and send the same number of packets per RTT that an un-paced, slow-starting
  * Reno or CUBIC flow would:
  */
-static const int bbr_high_gain  = BBR_UNIT * 3000 / 1000 + 3;
+static const int bbr_high_gain  = BBR_UNIT * 3000 / 1000 + 10;
 /* The pacing gain of 1/high_gain in BBR_DRAIN is calculated to typically drain
  * the queue created in BBR_STARTUP in a single round:
  */
@@ -168,7 +168,7 @@ static const u32 bbr_cycle_rand = 7;
  * smooth functioning, a sliding window protocol ACKing every other packet
  * needs at least 4 packets in flight:
  */
-static const u32 bbr_cwnd_min_target = 6;
+static const u32 bbr_cwnd_min_target = 5;
 
 /* To estimate if BBR_STARTUP mode (i.e. high_gain) has filled pipe... */
 /* If bw has increased significantly (1.25x), there may be more bw available: */
@@ -440,7 +440,7 @@ static void bbr_set_cwnd(struct sock *sk, const struct rate_sample *rs,
 		cwnd = min(cwnd + acked, target_cwnd);
 	else if (cwnd < target_cwnd || tp->delivered < TCP_INIT_CWND)
 		cwnd = cwnd + acked;
-	cwnd = max(cwnd * 2, bbr_cwnd_min_target * 4);
+	cwnd = max(cwnd * 8, bbr_cwnd_min_target * 10);
 
 done:
 	tp->snd_cwnd = min(cwnd, tp->snd_cwnd_clamp);	/* apply global cap */
