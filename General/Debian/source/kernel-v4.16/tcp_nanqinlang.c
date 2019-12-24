@@ -121,8 +121,8 @@ struct bbr {
 	u32	lt_last_delivered;   /* LT intvl start: tp->delivered */
 	u32	lt_last_stamp;	     /* LT intvl start: tp->delivered_mstamp */
 	u32	lt_last_lost;	     /* LT intvl start: tp->lost */
-	u32	pacing_gain:30,	/* current gain for setting pacing rate */
-		cwnd_gain:30,	/* current gain for setting cwnd */
+	u32	pacing_gain:20,	/* current gain for setting pacing rate */
+		cwnd_gain:20,	/* current gain for setting cwnd */
 		full_bw_reached:1,   /* reached full bw in Startup? */
 		full_bw_cnt:2,	/* number of rounds without large bw gains */
 		cycle_idx:3,	/* current index in pacing_gain cycle array */
@@ -140,7 +140,7 @@ static const u32 bbr_min_rtt_win_sec = 8;
 /* Minimum time (in ms) spent at bbr_cwnd_min_target in BBR_PROBE_RTT mode: */
 static const u32 bbr_probe_rtt_mode_ms = 100;
 /* Skip TSO below the following bandwidth (bits/sec): */
-static const int bbr_min_tso_rate = 300000000;
+static const int bbr_min_tso_rate = 30000000;
 
 /* We use a high_gain value of 2/ln(2) because it's the smallest pacing gain
  * that will allow a smoothly increasing pacing rate that will double each RTT
