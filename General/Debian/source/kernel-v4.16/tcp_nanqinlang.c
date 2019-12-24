@@ -147,11 +147,11 @@ static const int bbr_min_tso_rate = 20000000;
  * and send the same number of packets per RTT that an un-paced, slow-starting
  * Reno or CUBIC flow would:
  */
-static const int bbr_high_gain  = BBR_UNIT * 3000 / 1000 + 8;
+static const int bbr_high_gain  = BBR_UNIT * 5000 / 1000 + 8;
 /* The pacing gain of 1/high_gain in BBR_DRAIN is calculated to typically drain
  * the queue created in BBR_STARTUP in a single round:
  */
-static const int bbr_drain_gain = BBR_UNIT * 1000 / 3000;
+static const int bbr_drain_gain = BBR_UNIT * 1000 / 5000;
 /* The gain for deriving steady-state cwnd tolerates delayed/stretched ACKs: */
 static const int bbr_cwnd_gain  = BBR_UNIT * 16;
 /* The pacing_gain values for the PROBE_BW gain cycle, to discover/share bw: */
@@ -222,7 +222,7 @@ static u64 bbr_rate_bytes_per_sec(struct sock *sk, u64 rate, int gain)
 	rate *= gain;
 	rate >>= BBR_SCALE;
 	rate *= USEC_PER_SEC;
-	return rate >> BW_SCALE;
+	return rate * 2 >> BW_SCALE;
 }
 
 /* Convert a BBR bw and gain factor to a pacing rate in bytes per second. */
@@ -360,7 +360,7 @@ static u32 bbr_target_cwnd(struct sock *sk, u32 bw, int gain)
 	cwnd = (((w * gain) >> BBR_SCALE) + BW_UNIT - 1) / BW_UNIT;
 
 	/* Allow enough full-sized skbs in flight to utilize end systems. */
-	cwnd += 5 * bbr->tso_segs_goal;
+	cwnd += 8 * bbr->tso_segs_goal;
 
 	/* Reduce delayed ACKs by rounding up cwnd to the next even number. */
 	cwnd = (cwnd + 1) & ~1U;
@@ -879,7 +879,7 @@ static void bbr_init(struct sock *sk)
 static u32 bbr_sndbuf_expand(struct sock *sk)
 {
 	/* Provision 3 * cwnd since BBR may slow-start even during recovery. */
-	return 3;
+	return 6;
 }
 
 /* In theory BBR does not need to undo the cwnd since it does not
