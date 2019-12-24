@@ -147,7 +147,7 @@ static const int bbr_min_tso_rate = 35000000;
  * and send the same number of packets per RTT that an un-paced, slow-starting
  * Reno or CUBIC flow would:
  */
-static const int bbr_high_gain  = BBR_UNIT * 8000 / 1000 + 10;
+static const int bbr_high_gain  = BBR_UNIT * 8000 / 1000 + 1;
 /* The pacing gain of 1/high_gain in BBR_DRAIN is calculated to typically drain
  * the queue created in BBR_STARTUP in a single round:
  */
@@ -156,7 +156,7 @@ static const int bbr_drain_gain = BBR_UNIT * 1000 / 8000;
 static const int bbr_cwnd_gain  = BBR_UNIT * 14;
 /* The pacing_gain values for the PROBE_BW gain cycle, to discover/share bw: */
 static const int bbr_pacing_gain[] = {
-	BBR_UNIT * 12 / 4,	/* probe for more available bw */
+	BBR_UNIT * 10 / 4,	/* probe for more available bw */
 	BBR_UNIT * 3 / 4,	/* drain queue and/or yield bw to other flows */
 	BBR_UNIT * 6 / 4, BBR_UNIT * 6 / 4, BBR_UNIT * 6 / 4,	/* cruise at 1.0*bw to utilize pipe, */
 	BBR_UNIT * 6 / 4, BBR_UNIT * 6 / 4, BBR_UNIT * 6 / 4	/* without creating excess queue... */
@@ -180,11 +180,11 @@ static const u32 bbr_full_bw_cnt = 4;
 /* The minimum number of rounds in an LT bw sampling interval: */
 static const u32 bbr_lt_intvl_min_rtts = 4;
 /* If lost/delivered ratio > 20%, interval is "lossy" and we may be policed: */
-static const u32 bbr_lt_loss_thresh = 40;
+static const u32 bbr_lt_loss_thresh = 60;
 /* If 2 intervals have a bw ratio <= 1/8, their bw is "consistent": */
 static const u32 bbr_lt_bw_ratio = BBR_UNIT / 4;
 /* If 2 intervals have a bw diff <= 4 Kbit/sec their bw is "consistent": */
-static const u32 bbr_lt_bw_diff = 4000 / 16;
+static const u32 bbr_lt_bw_diff = 4000 / 1;
 /* If we estimate we're policed, use lt_bw for this many round trips: */
 static const u32 bbr_lt_bw_max_rtts = 48;
 
@@ -440,7 +440,7 @@ static void bbr_set_cwnd(struct sock *sk, const struct rate_sample *rs,
 		cwnd = min(cwnd + acked, target_cwnd);
 	else if (cwnd < target_cwnd || tp->delivered < TCP_INIT_CWND)
 		cwnd = cwnd + acked;
-	cwnd = max(cwnd * 8, bbr_cwnd_min_target * 10);
+	cwnd = max(cwnd, bbr_cwnd_min_target);
 
 done:
 	tp->snd_cwnd = min(cwnd, tp->snd_cwnd_clamp);	/* apply global cap */
