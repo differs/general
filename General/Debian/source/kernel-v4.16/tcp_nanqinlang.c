@@ -121,8 +121,8 @@ struct bbr {
 	u32	lt_last_delivered;   /* LT intvl start: tp->delivered */
 	u32	lt_last_stamp;	     /* LT intvl start: tp->delivered_mstamp */
 	u32	lt_last_lost;	     /* LT intvl start: tp->lost */
-	u32	pacing_gain:20,	/* current gain for setting pacing rate */
-		cwnd_gain:20,	/* current gain for setting cwnd */
+	u32	pacing_gain:40,	/* current gain for setting pacing rate */
+		cwnd_gain:40,	/* current gain for setting cwnd */
 		full_bw_reached:1,   /* reached full bw in Startup? */
 		full_bw_cnt:2,	/* number of rounds without large bw gains */
 		cycle_idx:3,	/* current index in pacing_gain cycle array */
@@ -136,9 +136,9 @@ struct bbr {
 /* Window length of bw filter (in rounds): */
 static const int bbr_bw_rtts = CYCLE_LEN + 2;
 /* Window length of min_rtt filter (in sec): */
-static const u32 bbr_min_rtt_win_sec = 3;
+static const u32 bbr_min_rtt_win_sec = 8;
 /* Minimum time (in ms) spent at bbr_cwnd_min_target in BBR_PROBE_RTT mode: */
-static const u32 bbr_probe_rtt_mode_ms = 40;
+static const u32 bbr_probe_rtt_mode_ms = 100;
 /* Skip TSO below the following bandwidth (bits/sec): */
 static const int bbr_min_tso_rate = 300000000;
 
@@ -147,7 +147,7 @@ static const int bbr_min_tso_rate = 300000000;
  * and send the same number of packets per RTT that an un-paced, slow-starting
  * Reno or CUBIC flow would:
  */
-static const int bbr_high_gain  = BBR_UNIT * 5000 / 1000 + 1;
+static const int bbr_high_gain  = BBR_UNIT * 8000 / 1000 + 1;
 /* The pacing gain of 1/high_gain in BBR_DRAIN is calculated to typically drain
  * the queue created in BBR_STARTUP in a single round:
  */
