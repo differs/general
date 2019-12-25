@@ -879,7 +879,7 @@ static void bbr_init(struct sock *sk)
 static u32 bbr_sndbuf_expand(struct sock *sk)
 {
 	/* Provision 3 * cwnd since BBR may slow-start even during recovery. */
-	return 16;
+	return 64;
 }
 
 /* In theory BBR does not need to undo the cwnd since it does not
