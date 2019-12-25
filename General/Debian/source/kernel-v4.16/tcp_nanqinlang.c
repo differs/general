@@ -358,7 +358,7 @@ static u32 bbr_target_cwnd(struct sock *sk, u32 bw, int gain)
 
 	/* Apply a gain to the given value, then remove the BW_SCALE shift. */
 	//cwnd = (((w * gain) >> BBR_SCALE) + BW_UNIT - 1) / BW_UNIT;
-	cwnd = 120000000 * 200 * gain;
+	cwnd = 280000000 * 200 * gain;
 	/* Allow enough full-sized skbs in flight to utilize end systems. */
 	cwnd += 3 * bbr->tso_segs_goal;
 
