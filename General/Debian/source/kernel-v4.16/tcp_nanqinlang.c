@@ -147,13 +147,13 @@ static const int bbr_min_tso_rate = 32000000;
  * and send the same number of packets per RTT that an un-paced, slow-starting
  * Reno or CUBIC flow would:
  */
-static const int bbr_high_gain  = BBR_UNIT * 3600 / 1000 + 1;
+static const int bbr_high_gain  = BBR_UNIT * 3200 / 1000 + 1;
 /* The pacing gain of 1/high_gain in BBR_DRAIN is calculated to typically drain
  * the queue created in BBR_STARTUP in a single round:
  */
-static const int bbr_drain_gain = BBR_UNIT * 1000 / 3600;
+static const int bbr_drain_gain = BBR_UNIT * 1000 / 3200;
 /* The gain for deriving steady-state cwnd tolerates delayed/stretched ACKs: */
-static const int bbr_cwnd_gain  = BBR_UNIT * 8;
+static const int bbr_cwnd_gain  = BBR_UNIT * 5;
 /* The pacing_gain values for the PROBE_BW gain cycle, to discover/share bw: */
 static const int bbr_pacing_gain[] = {
 	BBR_UNIT * 6 / 4,	/* probe for more available bw */
@@ -879,7 +879,7 @@ static void bbr_init(struct sock *sk)
 static u32 bbr_sndbuf_expand(struct sock *sk)
 {
 	/* Provision 3 * cwnd since BBR may slow-start even during recovery. */
-	return 5;
+	return 16;
 }
 
 /* In theory BBR does not need to undo the cwnd since it does not
