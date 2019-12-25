@@ -156,7 +156,7 @@ static const int bbr_drain_gain = BBR_UNIT * 1000 / 2885;
 static const int bbr_cwnd_gain  = BBR_UNIT * 20;
 /* The pacing_gain values for the PROBE_BW gain cycle, to discover/share bw: */
 static const int bbr_pacing_gain[] = {
-	BBR_UNIT * 6 / 4,	/* probe for more available bw */
+	BBR_UNIT * 8,	/* probe for more available bw */
 	BBR_UNIT * 3 / 4,	/* drain queue and/or yield bw to other flows */
 	BBR_UNIT * 8 / 4, BBR_UNIT * 8 / 4, BBR_UNIT * 8 / 4,	/* cruise at 1.0*bw to utilize pipe, */
 	BBR_UNIT * 8 / 4, BBR_UNIT * 8 / 4, BBR_UNIT * 8 / 4	/* without creating excess queue... */
