@@ -140,20 +140,20 @@ static const u32 bbr_min_rtt_win_sec = 10;
 /* Minimum time (in ms) spent at bbr_cwnd_min_target in BBR_PROBE_RTT mode: */
 static const u32 bbr_probe_rtt_mode_ms = 100;
 /* Skip TSO below the following bandwidth (bits/sec): */
-static const int bbr_min_tso_rate = 3200000;
+static const int bbr_min_tso_rate = 32000000;
 
 /* We use a high_gain value of 2/ln(2) because it's the smallest pacing gain
  * that will allow a smoothly increasing pacing rate that will double each RTT
  * and send the same number of packets per RTT that an un-paced, slow-starting
  * Reno or CUBIC flow would:
  */
-static const int bbr_high_gain  = BBR_UNIT * 2600 / 1000 + 1;
+static const int bbr_high_gain  = BBR_UNIT * 3600 / 1000 + 1;
 /* The pacing gain of 1/high_gain in BBR_DRAIN is calculated to typically drain
  * the queue created in BBR_STARTUP in a single round:
  */
-static const int bbr_drain_gain = BBR_UNIT * 1000 / 2600;
+static const int bbr_drain_gain = BBR_UNIT * 1000 / 3600;
 /* The gain for deriving steady-state cwnd tolerates delayed/stretched ACKs: */
-static const int bbr_cwnd_gain  = BBR_UNIT * 8;
+static const int bbr_cwnd_gain  = BBR_UNIT * 4;
 /* The pacing_gain values for the PROBE_BW gain cycle, to discover/share bw: */
 static const int bbr_pacing_gain[] = {
 	BBR_UNIT * 6 / 4,	/* probe for more available bw */
