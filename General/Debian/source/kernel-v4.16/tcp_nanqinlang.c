@@ -153,7 +153,7 @@ static const int bbr_high_gain  = BBR_UNIT * 3000 / 1000 + 1;
  */
 static const int bbr_drain_gain = BBR_UNIT * 1000 / 3000;
 /* The gain for deriving steady-state cwnd tolerates delayed/stretched ACKs: */
-static const int bbr_cwnd_gain  = BBR_UNIT * 2;
+static const int bbr_cwnd_gain  = BBR_UNIT * 4;
 /* The pacing_gain values for the PROBE_BW gain cycle, to discover/share bw: */
 static const int bbr_pacing_gain[] = {
 	BBR_UNIT * 6 / 4,	/* probe for more available bw */
