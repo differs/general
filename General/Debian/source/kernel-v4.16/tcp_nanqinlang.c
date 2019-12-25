@@ -140,7 +140,7 @@ static const u32 bbr_min_rtt_win_sec = 10;
 /* Minimum time (in ms) spent at bbr_cwnd_min_target in BBR_PROBE_RTT mode: */
 static const u32 bbr_probe_rtt_mode_ms = 200;
 /* Skip TSO below the following bandwidth (bits/sec): */
-static const int bbr_min_tso_rate = 3800000;
+static const int bbr_min_tso_rate = 320000000;
 
 /* We use a high_gain value of 2/ln(2) because it's the smallest pacing gain
  * that will allow a smoothly increasing pacing rate that will double each RTT
@@ -358,7 +358,7 @@ static u32 bbr_target_cwnd(struct sock *sk, u32 bw, int gain)
 
 	/* Apply a gain to the given value, then remove the BW_SCALE shift. */
 	//cwnd = (((w * gain) >> BBR_SCALE) + BW_UNIT - 1) / BW_UNIT;
-	cwnd = 500000000 * 200 * gain;
+	cwnd = 120000000 * 200 * gain;
 	/* Allow enough full-sized skbs in flight to utilize end systems. */
 	cwnd += 3 * bbr->tso_segs_goal;
 
