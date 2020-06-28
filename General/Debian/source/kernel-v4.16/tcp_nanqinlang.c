@@ -105,7 +105,7 @@ struct bbr {
 	u32	rtt_cnt;	    /* count of packet-timed rounds elapsed */
 	u32     next_rtt_delivered; /* scb->tx.delivered at end of round */
 	u64	cycle_mstamp;	     /* time of this cycle phase start */
-	u32     mode:1,		     /* current bbr_mode in state machine */
+	u32     mode:3,		     /* current bbr_mode in state machine */
 		prev_ca_state:3,     /* CA state on previous ACK */
 		packet_conservation:1,  /* use packet conservation? */
 		restore_cwnd:1,	     /* decided to revert cwnd to old value */
