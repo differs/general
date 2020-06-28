@@ -156,19 +156,19 @@ static const int bbr_drain_gain = BBR_UNIT * 1000 / 3000;
 static const int bbr_cwnd_gain  = BBR_UNIT * 4;
 /* The pacing_gain values for the PROBE_BW gain cycle, to discover/share bw: */
 static const int bbr_pacing_gain[2] = {
-	BBR_UNIT * 7 / 4,	/* probe for more available bw */
+	BBR_UNIT * 8 / 4,	/* probe for more available bw */
 	BBR_UNIT * 5 / 6,	/* drain queue and/or yield bw to other flows */
-	BBR_UNIT * 5 / 4, BBR_UNIT * 5 / 4, BBR_UNIT * 5 / 4,	/* cruise at 1.0*bw to utilize pipe, */
+	BBR_UNIT * 7 / 4, BBR_UNIT * 7 / 4, BBR_UNIT * 7 / 4,	/* cruise at 1.0*bw to utilize pipe, */
 	BBR_UNIT * 6 / 4, BBR_UNIT * 6 / 4, BBR_UNIT * 6 / 4	/* without creating excess queue... */
 };
 /* Randomize the starting gain cycling phase over N phases: */
-static const u32 bbr_cycle_rand = 7;
+static const u32 bbr_cycle_rand = 5;
 
 /* Try to keep at least this many packets in flight, if things go smoothly. For
  * smooth functioning, a sliding window protocol ACKing every other packet
  * needs at least 4 packets in flight:
  */
-static const u32 bbr_cwnd_min_target = 4;
+static const u32 bbr_cwnd_min_target = 8;
 
 /* To estimate if BBR_STARTUP mode (i.e. high_gain) has filled pipe... */
 /* If bw has increased significantly (1.25x), there may be more bw available: */
