@@ -83,7 +83,7 @@
 #define BW_SCALE  24
 #define BW_UNIT   (1 << BW_SCALE)
 
-#define BBR_SCALE 16	/* scaling factor for fractions in BBR (e.g. gains) */
+#define BBR_SCALE 8	/* scaling factor for fractions in BBR (e.g. gains) */
 #define BBR_UNIT  (1 << BBR_SCALE)
 
 #define CYCLE_LEN 4	/* number of phases in a pacing gain cycle */
