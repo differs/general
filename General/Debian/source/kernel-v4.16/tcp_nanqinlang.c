@@ -140,7 +140,7 @@ static const u32 bbr_min_rtt_win_sec = 5;
 /* Minimum time (in ms) spent at bbr_cwnd_min_target in BBR_PROBE_RTT mode: */
 static const u32 bbr_probe_rtt_mode_ms = 220;
 /* Skip TSO below the following bandwidth (bits/sec): */
-static const int bbr_min_tso_rate = 280000;
+static const int bbr_min_tso_rate = 28000000;
 
 /* We use a high_gain value of 2/ln(2) because it's the smallest pacing gain
  * that will allow a smoothly increasing pacing rate that will double each RTT
@@ -155,7 +155,7 @@ static const int bbr_drain_gain = BBR_UNIT * 1000 / 3000;
 /* The gain for deriving steady-state cwnd tolerates delayed/stretched ACKs: */
 static const int bbr_cwnd_gain  = BBR_UNIT * 4;
 /* The pacing_gain values for the PROBE_BW gain cycle, to discover/share bw: */
-static const int bbr_pacing_gain[2] = {
+static const int bbr_pacing_gain[] = {
 	BBR_UNIT * 8 / 4,	/* probe for more available bw */
 	BBR_UNIT * 5 / 6,	/* drain queue and/or yield bw to other flows */
 	BBR_UNIT * 7 / 4, BBR_UNIT * 7 / 4, BBR_UNIT * 7 / 4,	/* cruise at 1.0*bw to utilize pipe, */
@@ -168,7 +168,7 @@ static const u32 bbr_cycle_rand = 5;
  * smooth functioning, a sliding window protocol ACKing every other packet
  * needs at least 4 packets in flight:
  */
-static const u32 bbr_cwnd_min_target = 8;
+static const u32 bbr_cwnd_min_target = 16;
 
 /* To estimate if BBR_STARTUP mode (i.e. high_gain) has filled pipe... */
 /* If bw has increased significantly (1.25x), there may be more bw available: */
