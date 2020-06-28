@@ -211,8 +211,8 @@ compiler(){
 	# kernel v4.13.x is different from the other older kernel
 	ver_4_16=`dpkg -l | grep linux-image | awk '{print $2}' | awk -F '-' '{print $3}' | grep "4.16"`
 	if   [[ ! -z "${ver_4_16}" ]]; then
-		wget https://raw.githubusercontent.com/differs/general/master/General/Debian/source/kernel-v4.16/tcp_nanqinlang.c
-		# wget https://raw.githubusercontent.com/tcp-nanqinlang/general/master/General/Debian/source/kernel-v4.16/tcp_nanqinlang.c
+		# wget https://raw.githubusercontent.com/differs/general/master/General/Debian/source/kernel-v4.16/tcp_nanqinlang.c
+		wget https://raw.githubusercontent.com/tcp-nanqinlang/general/master/General/Debian/source/kernel-v4.16/tcp_nanqinlang.c
 	fi
 
 	[[ ! -f tcp_nanqinlang.c ]] && echo -e "${Error} failed download tcp_nanqinlang.c, please check !" && exit 1
